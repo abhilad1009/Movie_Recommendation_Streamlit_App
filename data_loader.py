@@ -1,23 +1,35 @@
-# data_preparation.py
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import os
 
 def load_data():
-    # Load data from CSV or Kaggle dataset
-    path = os.getcwd()
+    
     movies = pd.read_csv('data/movies.csv')
+
+    movies['title'] = movies['title'].apply(lambda x: x.strip())
+    movies['genres'] = movies.genres.str.split('|')
+    movies.movieId = movies.movieId.astype('int32')
+
     ratings = pd.read_csv('data/ratings.csv')
-    data = pd.merge(movies,ratings,on='movieId')
-    return data
+    ratings.drop('timestamp', axis=1, inplace=True)
+
+    merged_data = pd.merge(movies,ratings,on='movieId')
+    return movies, ratings, merged_data
 
 def split_data(data):
-    # Implement user-based splitting logic
+
     train_data, test_data = train_test_split(data, test_size=0.5, stratify=data['userId'])
+
     return train_data, test_data
 
-# feature_enhancement.py
-def enhance_features(data):
-    # Example: Create a new feature 'WatchedBefore' based on historical data
-    # data['WatchedBefore'] = data.groupby('MovieID')['Rating'].transform('count') > 1
-    return data
+def genre_pivot(data):
+    movies_with_genres = data.copy(deep=True)
+    x = []
+    for index, row in data.iterrows():
+        x.append(index)
+        for genre in row['genres']:
+            movies_with_genres.at[index, genre] = 1
+    movies_with_genres = movies_with_genres.fillna(0)
+
+    return movies_with_genres
+
