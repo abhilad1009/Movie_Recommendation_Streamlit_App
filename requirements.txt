@@ -3,3 +3,4 @@ streamlit_authenticator
 pandas
 numpy
 scikit-learn
+matplotlib
