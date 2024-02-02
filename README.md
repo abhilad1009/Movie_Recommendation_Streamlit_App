@@ -6,3 +6,9 @@ Install dependencies:
 To run:
 
 `streamlit run streamlit_app.py`
+
+Login credentials:
+
+user - jdoe
+
+pass - 1234
